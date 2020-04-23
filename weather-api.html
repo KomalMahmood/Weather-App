@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+    <script src="https://kit.fontawesome.com/29a00776d0.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans&display=swap" rel="stylesheet">
+
+    <title>Weather App</title>
+    <style>
+
+      *{margin: 0;
+      padding:0;
+      font-family: 'Merriweather Sans', sans-serif;}
+      .container
+      {
+       
+      position: absolute;
+        width: 420px;
+        height: 100vh;
+        /* background-color: rgba(255,255,255,0.5); */
+        margin-left: 50px;
+        margin-top: 35px;
+        /* border:2px solid whitesmoke; */
+        
+
+      }
+     #container
+     {
+      position: relative;
+      width:100vw;
+      height: 100vh;
+      overflow: hidden;
+     }
+     h1{
+       border:2px solid rgba(255,255,255,0.6);
+       background-color: rgba(255,255,255,0.4);}
+        .vid
+        {
+        	position: absolute;
+            width:100vw;
+        	
+        }
+      .box,#output
+      {
+        position: relative;
+       
+        margin: 0px auto;
+        padding-top: 20px;
+        /* z-index: 20; */
+
+      }
+      .box{
+        background-color: rgba(68,160,161,0.5);
+        padding:35px 25px;
+        border-bottom:2px solid rgba(255,255,255,0.4);
+        border-top: none;
+      }
+      #output{text-align: center;
+        background:linear-gradient(to right,black,#C4CCD0,#5D999D,#5D999D,#C4CCD0,black);
+        position: absolute;
+        width: 500px;
+        height: 400px;
+        top:100px;
+        right:20%;
+        }
+      input{
+        height: 30px;
+        width: 220px;
+        margin-left: 30px;
+        margin-top: 10px;
+      }
+      h1 
+      {padding:20px;position: relative;}
+      h2{text-align: center;color:white;font-weight: lighter;}
+      button{background: linear-gradient(to right,black,transparent);
+      color: white;
+      width: 80px;
+      height: 35px;
+      cursor: pointer;
+      /* border: none; */
+      outline: none;
+     }
+     .box3 input{
+       width: 300px;
+       margin-top: 20px;
+     }
+     .box3 button{margin-left: 38%;margin-top: 20px;}
+     ::placeholder
+     {
+       padding:10px;
+     }
+     h3{
+       margin-top: 25px;
+       
+     }
+     .details
+     {
+       padding: 20px;
+     }
+    </style>
+    
+</head>
+<style>
+</style>
+<body>
+  <div id="container">
+    <video class="vid" autoloop="true" autoplay="true" muted="true">
+      <source src="sky.mp4" type="video/mp4" media="">
+      </video>
+    <div class="container">
+      
+      <h1 style="text-align: center;">WEATHER APP</h1>
+    <div class="box box1">
+        <h2>Search By City Name</h2><br/>
+    <input id="inp1" type="text" placeholder="City Name*">
+    <button id="btn1">Click</button>
+</div>
+<div class="box box2">
+    <h2>Search By ZipCode </h2><br/>
+    <input id="inp2" type="text" placeholder="City ZipCode*">
+    <button id="btn2">Click</button>
+</div>
+<div class="box box3">
+    <h2>Search By longitude & latitude</h2><br/>
+    <span><input id="inp3" type="text" placeholder="latitude*">
+    <input id="inp4" type="text" placeholder="longitude*"></span>
+    <button id="btn3">Click</button>
+</div>
+</div>
+        <div id="output"></div>
+        
+</div>
+<script src="jquery-3.4.1.min.js"></script>
+<script>
+$("#output").fadeOut(0);
+
+  // search by city name
+  $('#btn1').click(function(){
+      var inpt1=$('#inp1').val();
+$.ajax({
+    url:"https://api.openweathermap.org/data/2.5/weather?q=" + inpt1 + "&units=metric" + "&appid=ff4c7a637259054158706d2d1bc94008",
+    type:"GET",
+success:function(data){
+    fetchData(data)
+}
+})
+  });
+
+ // search by zip code
+  $('#btn2').click(function(){
+      var inpt2=$('#inp2').val();
+$.ajax({
+    url:"https://api.openweathermap.org/data/2.5/weather?zip=" + inpt2 + "&units=metric" + "&appid=ff4c7a637259054158706d2d1bc94008",
+    type:"GET",
+success:function(data){ 
+fetchData(data)
+}
+})
+  });
+
+  // search by latitude and longitude
+  $('#btn3').click(function(){
+      var inpt3=$('#inp3').val();
+      var inpt4=$('#inp4').val();
+$.ajax({
+    url:"https://api.openweathermap.org/data/2.5/weather?lat="+inpt3+ "&lon=" +inpt4+ "&units=metric" + "&appid=ff4c7a637259054158706d2d1bc94008",
+
+    type:"GET",
+success:function(data){
+    fetchData(data)
+}
+})
+  });
+// fetch data 
+  function fetchData(data){
+    console.log(data)
+   var code=data.weather[0].icon
+   $('#output').html(`<h1>Current Weather</h1>
+   <div class="details">
+   <div class="name">${data.name}<br/>(${data.sys.country})</div>
+   </div>
+   <div class="icon">
+<img src="http://openweathermap.org/img/wn/${code}@2x.png" alt="">${data.weather[0].main}
+   </div>
+   <div class="temperature">
+   <div class="celcius"><p>${Math.trunc((9/5*(data.main.temp))+32)}&#176F</p></div>
+   </div>
+   <div class="hum-speed">
+   <div class="hum"><h3>Humidity:${data.main.humidity}%</h3></div>
+   <div class="wind"><h3>Wind:${Math.round(data.wind.speed)}</h3></div>
+   </div>`
+  
+   );
+
+   $("#output").fadeIn(500);
+  }
+</script>
+</body>
+</html>
